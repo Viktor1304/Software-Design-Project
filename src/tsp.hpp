@@ -121,12 +121,12 @@ double tsp(const DistMatrix& dist, int store_id, const std::vector<int>& run_cus
                 if (!dist.count(id[u]) || !dist.at(id[u]).count(id[v]))
                     continue;
 
-                int nextMask = mask | (1 << v);
-                double newDist = dp[mask][u] + dist.at(id[u]).at(id[v]);
+                int next_mask = mask | (1 << v);
+                double new_dist = dp[mask][u] + dist.at(id[u]).at(id[v]);
 
-                if (newDist < dp[nextMask][v]) {
-                    dp[nextMask][v] = newDist;
-                    parent[nextMask][v] = u;
+                if (new_dist < dp[next_mask][v]) {
+                    dp[next_mask][v] = new_dist;
+                    parent[next_mask][v] = u;
                 }
             }
         }

@@ -27,7 +27,7 @@ void print_full_route(int store_id,
                     const std::vector<int>& tour,
                     const ParentMatrix& parents)
 {
-    std::vector<int> fullRoute;
+    std::vector<int> full_route;
 
     int prev = store_id;
 
@@ -35,20 +35,20 @@ void print_full_route(int store_id,
         auto segment = reconstruct_path(prev, stop, parents);
 
         // Avoid duplicating nodes
-        if (!fullRoute.empty())
+        if (!full_route.empty())
             segment.erase(segment.begin());
 
-        fullRoute.insert(fullRoute.end(), segment.begin(), segment.end());
+        full_route.insert(full_route.end(), segment.begin(), segment.end());
         prev = stop;
     }
 
     // Return to store
     auto back = reconstruct_path(prev, store_id, parents);
     back.erase(back.begin());
-    fullRoute.insert(fullRoute.end(), back.begin(), back.end());
+    full_route.insert(full_route.end(), back.begin(), back.end());
 
     std::cout << "Full route (all nodes visited): ";
-    for (int n : fullRoute)
+    for (int n : full_route)
         std::cout << n << " ";
     std::cout << "\n";
 }

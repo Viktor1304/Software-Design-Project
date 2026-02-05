@@ -40,44 +40,44 @@ int main() {
         std::cout << "\n============================\n";
         std::cout << "Delivery Run " << r + 1 << "\n";
 
-        DistMatrix distMatrix = build_metric_matrix(graph, STORE_ID, runs[r]);
+        DistMatrix dist_matrix = build_metric_matrix(graph, STORE_ID, runs[r]);
 
-        std::vector<int> tspTour;
-        double tourDistance = tsp(distMatrix, STORE_ID, runs[r], tspTour);
+        std::vector<int> tsp_tour;
+        double tour_distance = tsp(dist_matrix, STORE_ID, runs[r], tsp_tour);
 
         std::cout << "TSP stop order: Store → ";
-        for (int id : tspTour)
+        for (int id : tsp_tour)
             std::cout << id << " → ";
         std::cout << "Store\n";
 
-        std::cout << "Optimal tour distance: " << tourDistance << " km\n";
+        std::cout << "Optimal tour distance: " << tour_distance << " km\n";
 
-        ParentMatrix parentMat;
+        ParentMatrix parent_mat;
         std::vector<int> nodes = runs[r];
         nodes.push_back(STORE_ID);
 
         for (int node : nodes) {
             auto sp = dijkstra(graph, node);
-            parentMat[node] = sp.parent;
+            parent_mat[node] = sp.parent;
         }
 
-        std::vector<int> fullRoute;
+        std::vector<int> full_route;
         int prev = STORE_ID;
 
-        for (int stop : tspTour) {
-            auto segment = reconstruct_path(prev, stop, parentMat);
-            if (!fullRoute.empty())
+        for (int stop : tsp_tour) {
+            auto segment = reconstruct_path(prev, stop, parent_mat);
+            if (!full_route.empty())
                 segment.erase(segment.begin());
-            fullRoute.insert(fullRoute.end(), segment.begin(), segment.end());
+            full_route.insert(full_route.end(), segment.begin(), segment.end());
             prev = stop;
         }
 
-        auto back = reconstruct_path(prev, STORE_ID, parentMat);
+        auto back = reconstruct_path(prev, STORE_ID, parent_mat);
         back.erase(back.begin());
-        fullRoute.insert(fullRoute.end(), back.begin(), back.end());
+        full_route.insert(full_route.end(), back.begin(), back.end());
 
         std::cout << "Full navigation path: ";
-        for (int node : fullRoute)
+        for (int node : full_route)
             std::cout << node << " ";
         std::cout << "\n";
     }
