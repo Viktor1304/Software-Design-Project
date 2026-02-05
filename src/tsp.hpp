@@ -19,7 +19,7 @@ SPResult dijkstra(const Graph& g, int source) {
 	SPResult res;
     const double INF = std::numeric_limits<double>::infinity();
 
-    for (const auto& [node, _] : g.getAdjList())
+    for (const auto& [node, _] : g.get_adj_list())
         res.dist[node] = INF;
 
     res.dist[source] = 0;
@@ -32,7 +32,7 @@ SPResult dijkstra(const Graph& g, int source) {
         auto [d, u] = pq.top(); pq.pop();
         if (d > res.dist[u]) continue;
 
-        for (const auto& e : g.getNeighbors(u)) {
+        for (const auto& e : g.get_neighbors(u)) {
             double nd = d + e.second;
             if (nd < res.dist[e.first]) {
                 res.dist[e.first] = nd;
@@ -50,7 +50,7 @@ dijkstra_all(const Graph& g, int source)
     std::unordered_map<int, double> dist;
     const double INF = std::numeric_limits<double>::infinity();
 
-    for (const auto& [node, _] : g.getAdjList())
+    for (const auto& [node, _] : g.get_adj_list())
         dist[node] = INF;
 
     dist[source] = 0;
@@ -63,7 +63,7 @@ dijkstra_all(const Graph& g, int source)
         auto [d, u] = pq.top(); pq.pop();
         if (d > dist[u]) continue;
 
-        for (const auto& e : g.getNeighbors(u)) {
+        for (const auto& e : g.get_neighbors(u)) {
             double nd = d + e.second;
             if (nd < dist[e.first]) {
                 dist[e.first] = nd;
@@ -93,11 +93,11 @@ DistMatrix build_metric_matrix(const Graph& g,
     return matrix;
 }
 
-double tsp(const DistMatrix& dist, int storeId, const std::vector<int>& runCustomers, std::vector<int>& bestTour) {
-    int n = runCustomers.size();
+double tsp(const DistMatrix& dist, int store_id, const std::vector<int>& run_customers, std::vector<int>& route) {
+    int n = run_customers.size();
     if (n == 0) return 0.0;
 
-    std::vector<int> id = runCustomers;
+    std::vector<int> id = run_customers;
 
     int FULL = (1 << n);
     const double INF = std::numeric_limits<double>::infinity();
@@ -106,16 +106,16 @@ double tsp(const DistMatrix& dist, int storeId, const std::vector<int>& runCusto
     std::vector<std::vector<int>> parent(FULL, std::vector<int>(n, -1));
 
     for (int i = 0; i < n; ++i) {
-        if (dist.count(storeId) && dist.at(storeId).count(id[i]))
-            dp[1 << i][i] = dist.at(storeId).at(id[i]);
+        if (dist.count(store_id) && dist.at(store_id).count(id[i]))
+            dp[1 << i][i] = dist.at(store_id).at(id[i]);
     }
 
-    for (int mask = 0; mask < FULL; ++mask) {
-        for (int u = 0; u < n; ++u) {
+    for (int mask = 0; mask < FULL; ++ mask) {
+        for (int u = 0; u < n; ++ u) {
             if (!(mask & (1 << u))) continue;
             if (dp[mask][u] == INF) continue;
 
-            for (int v = 0; v < n; ++v) {
+            for (int v = 0; v < n; ++ v) {
                 if (mask & (1 << v)) continue;
 
                 if (!dist.count(id[u]) || !dist.at(id[u]).count(id[v]))
@@ -136,10 +136,10 @@ double tsp(const DistMatrix& dist, int storeId, const std::vector<int>& runCusto
     int last = -1;
 
     for (int i = 0; i < n; ++i) {
-        if (!dist.count(id[i]) || !dist.at(id[i]).count(storeId))
+        if (!dist.count(id[i]) || !dist.at(id[i]).count(store_id))
             continue;
 
-        double total = dp[FULL - 1][i] + dist.at(id[i]).at(storeId);
+        double total = dp[FULL - 1][i] + dist.at(id[i]).at(store_id);
         if (total < best) {
             best = total;
             last = i;
@@ -147,17 +147,17 @@ double tsp(const DistMatrix& dist, int storeId, const std::vector<int>& runCusto
     }
 
     int mask = FULL - 1;
-    std::vector<int> reverseTour;
+    std::vector<int> reverse_tour;
 
     while (last != -1) {
-        reverseTour.push_back(id[last]);
+        reverse_tour.push_back(id[last]);
         int p = parent[mask][last];
         mask ^= (1 << last);
         last = p;
     }
 
-    std::reverse(reverseTour.begin(), reverseTour.end());
-    bestTour = reverseTour;
+    std::reverse(reverse_tour.begin(), reverse_tour.end());
+    route = reverse_tour;
 
     return best;
 }

@@ -7,31 +7,31 @@
 class Graph {
 private:
 	int num_nodes;
-	std::unordered_map<int, std::vector<std::pair<int, double> > > adjList;
+	std::unordered_map<int, std::vector<std::pair<int, double> > > adj_list;
 
 public:
 	Graph(int num_nodes) : num_nodes(num_nodes) {}
 
 	void addEdge(int u, int v, double weight) {
-		adjList[u].push_back(std::make_pair(v, weight));
-		adjList[v].push_back(std::make_pair(u, weight));
+		adj_list[u].push_back(std::make_pair(v, weight));
+		adj_list[v].push_back(std::make_pair(u, weight));
 	}
 
-	const std::vector<std::pair<int, double> >& getNeighbors(int u) const {
-		if (adjList.find(u) == adjList.end()) {
+	const std::vector<std::pair<int, double> >& get_neighbors(int u) const {
+		if (adj_list.find(u) == adj_list.end()) {
 			static const std::vector<std::pair<int, double> > empty;
 			return empty;
 		}
-		return adjList.at(u);
+		return adj_list.at(u);
 	}
 
-	const std::unordered_map<int, std::vector<std::pair<int, double> > >& getAdjList() const {
-		return adjList;
+	const std::unordered_map<int, std::vector<std::pair<int, double> > >& get_adj_list() const {
+		return adj_list;
 	}
 	
 	void dfs(int node, bool* visited) const {
 		visited[node] = true;
-		for (const auto& neighbor : adjList.at(node)) {
+		for (const auto& neighbor : adj_list.at(node)) {
 			int next_node = neighbor.first;
 
 			if (!visited[next_node]) {
@@ -41,7 +41,7 @@ public:
 	}
 
 	const bool connected() const {
-		int start = adjList.begin()->first;
+		int start = adj_list.begin()->first;
 		bool visited[this->num_nodes] = {false};
 		dfs(start, visited);
 
@@ -54,7 +54,7 @@ public:
 	}
 
 	void printGraph() const {
-		for (const auto& pair : adjList) {
+		for (const auto& pair : adj_list) {
 			int u = pair.first;
 			const auto& neighbors = pair.second;
 			std::cout << "Node " << u << ": ";

@@ -36,7 +36,7 @@ void generate_graph(Graph& graph, int store_id, int num_customers) {
 		int v = dis_connected(gen);
 
 		if (u != v) {
-			auto neighbors_u = graph.getNeighbors(u);
+			auto neighbors_u = graph.get_neighbors(u);
 			bool already_connected = false;
 
 			for (const auto& neighbor : neighbors_u) {

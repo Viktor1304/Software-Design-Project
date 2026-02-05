@@ -23,13 +23,13 @@ void execute_plan(const Graph& graph, const DistMatrix& dist_matrix, const std::
 
 }
 
-void print_full_route(int storeId,
+void print_full_route(int store_id,
                     const std::vector<int>& tour,
                     const ParentMatrix& parents)
 {
     std::vector<int> fullRoute;
 
-    int prev = storeId;
+    int prev = store_id;
 
     for (int stop : tour) {
         auto segment = reconstruct_path(prev, stop, parents);
@@ -43,7 +43,7 @@ void print_full_route(int storeId,
     }
 
     // Return to store
-    auto back = reconstruct_path(prev, storeId, parents);
+    auto back = reconstruct_path(prev, store_id, parents);
     back.erase(back.begin());
     fullRoute.insert(fullRoute.end(), back.begin(), back.end());
 

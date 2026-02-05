@@ -1,7 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <memory>
-#include <algorithm>
 
 #include "Graph.h"
 #include "Store.h"
