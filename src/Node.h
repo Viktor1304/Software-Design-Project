@@ -9,11 +9,11 @@ private:
 public:
 	Node(std::string name, int id) : name(name), id(id) {}
 
-	std::string getName() const {
+	std::string get_name() const {
 		return name;
 	}
 
-	int getId() const {
+	int get_id() const {
 		return id;
 	}
 };

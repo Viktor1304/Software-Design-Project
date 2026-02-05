@@ -18,6 +18,10 @@ public:
 		baskets_ordered = baskets;
 	}
 
+	std::string get_name() const {
+		return Node::get_name();
+	}
+
 	int get_order() const {
 		return baskets_ordered;
 	}
