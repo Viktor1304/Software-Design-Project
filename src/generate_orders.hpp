@@ -2,6 +2,8 @@
 #define __generate_orders__
 
 #include "Customer.h"
+#include <algorithm>
+#include <functional>
 #include <vector>
 
 const int MAX_BASKETS = 3;
@@ -13,31 +15,84 @@ void generate_orders(std::vector<Customer>& customers) {
 	}
 }
 
-std::vector<std::vector<int> > group_customers(const std::vector<Customer>& customers) {
-	std::vector<std::vector<int> > runs;
-	std::vector<int> current_run;
-	int baskets = 0;
+using Run = std::vector<int>;
+using Partition = std::vector<Run>;
 
-	for (const auto& customer : customers) {
-		if (customer.get_order() == 0) {
-			continue;
-		}
+void generate_partitions(const std::vector<std::pair<int,int>>& customers, int capacity, 
+						 std::vector<bool>& used, Partition& current, std::vector<Partition>& all_solutions)
+{
+    int n = customers.size();
 
-		if (baskets + customer.get_order() > MAX_BASKETS) {
-			runs.push_back(current_run);
-			current_run.clear();
-			baskets = 0;
-		}
+    int first = -1;
+    for (int i = 0; i < n; ++ i) {
+        if (!used[i]) {
+            first = i;
+            break;
+        }
+    }
 
-		current_run.push_back(customer.get_id());
-		baskets += customer.get_order();
-	}
+    if (first == -1) {
+        all_solutions.push_back(current);
+        return;
+    }
 
-	if (!current_run.empty()) {
-		runs.push_back(current_run);
-	}
+    std::vector<int> run;
+    int load = 0;
 
-	return runs;
+    std::function<void(int)> build_run = [&](int idx)
+    {
+        if (load > capacity) return;
+
+        if (!run.empty()) {
+            current.push_back(run);
+            generate_partitions(customers, capacity, used, current, all_solutions);
+            current.pop_back();
+        }
+
+        for (int i = idx; i < n; ++ i) {
+            if (used[i]) continue;
+
+            int baskets = customers[i].second;
+            if (load + baskets > capacity) continue;
+
+            used[i] = true;
+            run.push_back(customers[i].first);
+            load += baskets;
+
+            build_run(i + 1);
+
+            load -= baskets;
+            run.pop_back();
+            used[i] = false;
+        }
+    };
+
+    used[first] = true;
+    run.push_back(customers[first].first);
+    load = customers[first].second;
+
+    build_run(first + 1);
+
+    used[first] = false;
 }
+
+std::vector<Partition>
+generate_unique_delivery_plans(const std::vector<Customer>& customers, int capacity)
+{
+    std::vector<std::pair<int,int>> active;
+    for (const auto& c : customers) {
+        if (c.get_order() > 0) {
+            active.push_back({c.get_id(), c.get_order()});
+		}
+	}
+
+    std::vector<bool> used(active.size(), false);
+    Partition current;
+    std::vector<Partition> solutions;
+
+    generate_partitions(active, capacity, used, current, solutions);
+    return solutions;
+}
+
 
 #endif
