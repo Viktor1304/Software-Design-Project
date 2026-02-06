@@ -18,9 +18,8 @@ void generate_orders(std::vector<Customer>& customers) {
 using Run = std::vector<int>;
 using Partition = std::vector<Run>;
 
-void generate_partitions(const std::vector<std::pair<int,int>>& customers, int capacity, 
-						 std::vector<bool>& used, Partition& current, std::vector<Partition>& all_solutions)
-{
+void generate_partitions(const std::vector<std::pair<int,int> >& customers, int capacity, 
+						 std::vector<bool>& used, Partition& current, std::vector<Partition>& all_solutions) {
     int n = customers.size();
 
     int first = -1;
@@ -77,21 +76,20 @@ void generate_partitions(const std::vector<std::pair<int,int>>& customers, int c
 }
 
 std::vector<Partition>
-generate_unique_delivery_plans(const std::vector<Customer>& customers, int capacity)
-{
-    std::vector<std::pair<int,int>> active;
-    for (const auto& c : customers) {
-        if (c.get_order() > 0) {
-            active.push_back({c.get_id(), c.get_order()});
+generate_unique_delivery_plans(const std::vector<Customer>& customers, int capacity) {
+	std::vector<std::pair<int,int> > active;
+	for (const auto& c : customers) {
+		if (c.get_order() > 0) {
+			active.push_back({c.get_id(), c.get_order()});
 		}
 	}
 
-    std::vector<bool> used(active.size(), false);
-    Partition current;
-    std::vector<Partition> solutions;
+	std::vector<bool> used(active.size(), false);
+	Partition current;
+	std::vector<Partition> solutions;
 
-    generate_partitions(active, capacity, used, current, solutions);
-    return solutions;
+	generate_partitions(active, capacity, used, current, solutions);
+	return solutions;
 }
 
 
