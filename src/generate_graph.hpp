@@ -6,7 +6,7 @@
 #include <random>
 #include <set>
 
-void generate_graph(Graph& graph, int store_id, int num_customers) {
+inline void generate_graph(Graph& graph, int store_id, int num_customers) {
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<> dis_w(50.0, 1000.0);

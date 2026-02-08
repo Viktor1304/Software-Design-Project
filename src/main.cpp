@@ -34,9 +34,6 @@ int main() {
 				  << c.get_order() << " baskets\n";
 	}
 
-	double best_distance = std::numeric_limits<double>::infinity();
-	std::vector<std::vector<int> > optimal_run;
-
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
 	Robot robot(ROBOT_CAPACITY, customers, store, graph);

@@ -8,14 +8,14 @@
 #include <unordered_map>
 #include <vector>
 
-using ParentMatrix = std::unordered_map<int, std::unordered_map<int, int>>;
+using ParentMatrix = std::unordered_map<int, std::unordered_map<int, int> >;
 
 struct SPResult {
 	std::unordered_map<int, double> dist;
 	std::unordered_map<int, int> parent;
 };
 
-SPResult dijkstra(const Graph& g, int source) {
+inline SPResult dijkstra(const Graph& g, int source) {
 	SPResult res;
 	const double INF = std::numeric_limits<double>::infinity();
 
@@ -26,7 +26,7 @@ SPResult dijkstra(const Graph& g, int source) {
 	res.dist[source] = 0;
 
 	using P = std::pair<double, int>;
-	std::priority_queue<P, std::vector<P>, std::greater<>> pq;
+	std::priority_queue<P, std::vector<P>, std::greater<> > pq;
 	pq.push({0, source});
 
 	while (!pq.empty()) {
@@ -45,7 +45,7 @@ SPResult dijkstra(const Graph& g, int source) {
 	return res;
 }
 
-std::unordered_map<int, double>
+inline std::unordered_map<int, double>
 dijkstra_all(const Graph& g, int source) {
 	std::unordered_map<int, double> dist;
 	const double INF = std::numeric_limits<double>::infinity();
@@ -57,7 +57,7 @@ dijkstra_all(const Graph& g, int source) {
 	dist[source] = 0;
 
 	using P = std::pair<double, int>;
-	std::priority_queue<P, std::vector<P>, std::greater<>> pq;
+	std::priority_queue<P, std::vector<P>, std::greater<> > pq;
 	pq.push({0, source});
 
 	while (!pq.empty()) {
@@ -76,7 +76,7 @@ dijkstra_all(const Graph& g, int source) {
 }
 
 using DistMatrix = std::unordered_map<int, std::unordered_map<int, double> >;
-DistMatrix build_metric_matrix(const Graph& g, int storeId, const std::vector<int>& customers) {
+inline DistMatrix build_metric_matrix(const Graph& g, int storeId, const std::vector<int>& customers) {
 	DistMatrix matrix;
 
 	std::vector<int> nodes = customers;
@@ -85,13 +85,13 @@ DistMatrix build_metric_matrix(const Graph& g, int storeId, const std::vector<in
 	for (int node : nodes) {
 		auto sp = dijkstra_all(g, node);
 		for (int other : nodes) {
-			matrix[node][other] = sp[other];  // shortest path
+			matrix[node][other] = sp[other];
 		}
 	}
 	return matrix;
 }
 
-double tsp(const DistMatrix& dist, int store_id, const std::vector<int>& run_customers, std::vector<int>& route) {
+inline double tsp(const DistMatrix& dist, int store_id, const std::vector<int>& run_customers, std::vector<int>& route) {
 	int n = run_customers.size();
 	if (n == 0) return 0.0;
 
@@ -100,8 +100,8 @@ double tsp(const DistMatrix& dist, int store_id, const std::vector<int>& run_cus
 	int FULL = (1 << n);
 	const double INF = std::numeric_limits<double>::infinity();
 
-	std::vector<std::vector<double>> dp(FULL, std::vector<double>(n, INF));
-	std::vector<std::vector<int>> parent(FULL, std::vector<int>(n, -1));
+	std::vector<std::vector<double> > dp(FULL, std::vector<double>(n, INF));
+	std::vector<std::vector<int> > parent(FULL, std::vector<int>(n, -1));
 
 	for (int i = 0; i < n; ++ i) {
 		if (dist.count(store_id) && dist.at(store_id).count(id[i])) {
@@ -163,7 +163,7 @@ double tsp(const DistMatrix& dist, int store_id, const std::vector<int>& run_cus
 	return best;
 }
 
-std::vector<int> reconstruct_path(int start, int end, const ParentMatrix& parents) {
+inline std::vector<int> reconstruct_path(int start, int end, const ParentMatrix& parents) {
 	std::vector<int> path;
 	int curr = end;
 	path.push_back(curr);

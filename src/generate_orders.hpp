@@ -2,13 +2,12 @@
 #define __generate_orders__
 
 #include "Customer.h"
-#include <algorithm>
 #include <functional>
 #include <vector>
 
 const int MAX_BASKETS = 3;
 
-void generate_orders(std::vector<Customer>& customers) {
+inline void generate_orders(std::vector<Customer>& customers) {
 	for (auto& customer : customers) {
 		int order = rand() % MAX_BASKETS;
 		customer.set_order(order);
@@ -18,7 +17,7 @@ void generate_orders(std::vector<Customer>& customers) {
 using Run = std::vector<int>;
 using Partition = std::vector<Run>;
 
-void generate_partitions(const std::vector<std::pair<int,int> >& customers, int capacity, 
+inline void generate_partitions(const std::vector<std::pair<int,int> >& customers, int capacity, 
 						 std::vector<bool>& used, Partition& current, std::vector<Partition>& all_solutions) {
     int n = customers.size();
 
@@ -75,7 +74,7 @@ void generate_partitions(const std::vector<std::pair<int,int> >& customers, int 
     used[first] = false;
 }
 
-std::vector<Partition>
+inline std::vector<Partition>
 generate_unique_delivery_plans(const std::vector<Customer>& customers, int capacity) {
 	std::vector<std::pair<int,int> > active;
 	for (const auto& c : customers) {
